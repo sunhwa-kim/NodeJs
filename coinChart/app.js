@@ -36,11 +36,14 @@ var coinName = [];
   request.get({uri:'https://coin.zum.com/price?cm=more'}
   ,function(err,response,body){
     const $ = cheerio.load(body);
-
-    coinName.push($("td").find('a')[0].children[0].data.replace(/\n/gi,"").replace(/ /gi,""));
-
-    for (var i=1; i<3; i++) {
-      coinName.push($("td")[i].children[0].data.replace(/\n/gi,"").replace(/ /gi,""));
+    for (var i=0; i<5; i++) {
+      subArr = []
+      subArr.push($("td").parent('tr').eq(i).children('td').find('a')[0].children[0].data.replace(/\n/gi,"").replace(/ /gi,""))
+      subArr.push($("td").parent('tr').eq(i).children('td').eq(1).text().replace(/\n/gi,"").replace(/ /gi,""))
+      subArr.push($("td").parent('tr').eq(i).children('td').eq(2).text().replace(/\n/gi,"").replace(/ /gi,""))
+      coinName.push(subArr);
+console.log(coinName[1]);
+    // coinName.push($("td")[i].children[0].children[0].data.replace(/\n/gi,"").replace(/ /gi,""));
     }
   	res.send(coinName);
   })
