@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>재고 관리</title>
+</head>
+
+<body>
+  <div id="itemList">
+
+    <!-- 재고:<input type="text" id="itemTest" value="초기값"> -->
+  </div>
+
+  <br><br>
+  <div class="itemInsert">
+   신제품 입력 <br>
+   <b>제품명</b> : <input type="text" name="" value="" id="insertName"> /
+   <b>가격</b> : <input type="text" name="" value="" id="insertPrice"> /
+   <b>재고</b> : <input type="text" name="" value="" id="insertInventory"> /
+   <b>판매여부</b> : <select class="" name="" id="selectOpt">
+     <option value="1">판매중</option>
+     <option value="0">비매</option>
+   </select> /
+   <input type="button" name="" value="생성" id="admItemInsertBtn">
+
+  </div>
+</body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+  $.ajax({
+    url: '/list',
+    type: 'post',
+    data: {
+
+    },
+    success: function(res) {
+
+      for (var i = 0; i < res.length; i++) {
+        var itemList = res[i];
+        var appendItemText = "";
+        // console.log(itemList.name);
+        // $("#itemTest").val(itemList.name);
+
+
+        appendItemText +=
+        `<div class="item">
+            <b>재품명</b> : <input type="text" id="name${itemList.no}" value=${itemList.name}> /
+            <b>가격</b> : <input type="text" id="price${itemList.no}" value=${itemList.price}> /
+            <b>재고</b> : <input type="text" id="inventory${itemList.no}" value=${itemList.inventory}> /
+            <b>판매여부</b> : <select name="" id="select${itemList.no}"> <option value="1">판매중</option><option value="0">비매</option></select> /
+            <input type="button" id="itemName${i}btn" value="없데이트" onclick="updateBtnGO(${itemList.no})">
+         </div>`;
+
+         $("#itemList").append(appendItemText);
+      }//for end
+
+    }//success end
+  });
+  //$("#itemList").append(appendItemText);
+
+  function updateBtnGO(no) {
+
+    // console.log($(`#select${no}`).val());
+
+    var name = $(`#name${no}`).val();
+    var price = $(`#price${no}`).val();
+    var inventory = $(`#inventory${no}`).val();
+    var selectBoxx = $(`#select${no}`).val();
+
+
+    $.ajax({
+      url:`/adminUpdateItemTable`,
+      type:'post',
+      data:{
+        no:no,
+        name : name,
+        price : price,
+        inventory : inventory,
+        selectBoxx : selectBoxx
+      },
+      success:function(res){
+        alert("업뎃 완료!!")
+      }//success end
+    })//ajax end
+  }
+
+
+
+$("#admItemInsertBtn").click(function(){
+
+  reqParam = {};
+  reqParam.name = $("#insertName").val();
+  reqParam.price =  $("#insertPrice").val();
+  reqParam.inventory = $("#insertInventory").val();
+  reqParam.onsale = $("#selectOpt").val();
+
+  // console.log(onsale);
+  $.ajax({
+    url:`/adminInsertItemTable`,
+    type:'post',
+    data:{
+      param : JSON.stringify(reqParam)
+    },
+    success:function(res){
+      // console.log(res.insertId);
+      console.log(res);
+      console.log(res[0].name);
+      // location.href='/manageItem' //이 경우 위에 내가 쓰다만 내용이 없어지므로...다른 방법
+      var itemList = res[0];
+      var appendItemText = "";
+
+      appendItemText +=
+      `<div class="item">
+          <b>재품명</b> : <input type="text" id="name${itemList.no}" value=${itemList.name}> /
+          <b>가격</b> : <input type="text" id="price${itemList.no}" value=${itemList.price}> /
+          <b>재고</b> : <input type="text" id="inventory${itemList.no}" value=${itemList.inventory}> /
+          <b>판매여부</b> : <select name="" id="select${itemList.no}"> <option value="1">판매중</option><option value="0">비매</option></select> /
+          <input type="button" id="itemName${itemList.no}btn" value="없데이트" onclick="updateBtnGO(${itemList.no})">
+       </div>`;
+
+       $("#itemList").append(appendItemText);
+      // $("#itemList").append()
+      alert("생성");
+    }
+
+
+  })//ajax end
+})//admItemInsertBtn end
+
+</script>
+
+
+</html>

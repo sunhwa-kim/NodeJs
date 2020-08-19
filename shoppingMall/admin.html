@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>관리 페이지</title>
+</head>
+
+<body>
+  <input type="button" name="" value="재고관리" id="inventoryAdminBtn">
+  <input type="button" name="" value="주문관리" id="oderAdminBtn">
+
+</body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+
+  $("#inventoryAdminBtn").click(function() {
+    location.href="/manageItem";
+  })//btn end
+
+  $("#oderAdminBtn").click(function() {
+    location.href="/orderManage";
+  })//btn end
+
+</script>
+
+</html>

@@ -1,0 +1,63 @@
+라우터에 대한 요청/응답 기술 해보기
+
+"/"
+get 방식
+요청 parameter : none
+response : list.html
+
+
+'/list'
+post 방식
+요청 parameter : none
+response : select 쿼리 결과
+
+
+-----------------------------------------------------------
+
+'/order'
+get방식
+요청 parameter : none
+response : orderItem.html 파일
+
+
+'/orderItem'
+post 방식
+요청 parameter : no
+response : no에 해당하는 select 쿼리 결과
+
+
+'/insertOrder'
+post 방식
+요청 parameter : id, no, amount
+response : id,no,ampunt를 ordertable에 insert한 쿼리 결과
+
+
+
+'/updateItemTable'
+post 방식
+요청 parameter : no, amount(주문 후 남은 수량)
+response : no, amount를 itemtable에 update한 쿼리 결과
+
+
+-----------------------------------------------------------
+
+'/order2'
+get 방식
+요청 parameter : none
+response : oderItem2.html
+
+
+'/oderItem2'
+get 방식
+요청 parameter : no (선택 item number )
+response : no에 해당하는 select 쿼리 결과
+
+
+
+'/insertOrder2'
+post 방식
+요청 parameter : {it,no,amount(input information) / inventory(itemtable)}
+response : it,no,amount를 ordertable로 insert한 쿼리 후 
+	   inventory - amount 된 itemtablt update한 쿼리 결과
+
+

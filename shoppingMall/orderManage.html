@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>주문관리 페이지</title>
+</head>
+
+<body>
+  <div id="itemList">
+
+  </div>
+</body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+  // comlete이 0인것만 조회해와서 발송 완료
+  $.ajax({
+    url:`/admOrderSelect`,
+    type:'post',
+    data:{
+
+    },
+    success: function(res) {
+      for ( var i=0; i<res.length; i++) {
+        var orderList = res[i];
+        var appendOrderText = "" ;
+
+        appendOrderText +=
+        `<div class="item">
+            <b>아이디</b> : ${orderList.id}/
+            <b>제품명</b> : ${orderList.itemNo} /
+            <b>주문양</b> : ${orderList.quantity} /
+            <b>주문날짜</b> : ${orderList.data}> /
+            <input type="button" value="발송완료" onclick="sendCompleteBtn(${orderList.no})">
+         </div>`;
+
+         $("#itemList").append(appendOrderText);
+      }
+    }//success end
+  }) //ajax end
+
+function sendCompleteBtn(no) {
+  console.log(no);
+  $.ajax({
+    url:`/admOrderUpdate`,
+    type:'post',
+    data:{
+      no:no
+    },
+    success:function(res) {
+      location.href = '/orderManage';
+      alert("발송 완료");
+    }
+  })// ajax end
+}// Btn end
+
+</script>
+
+
+</html>

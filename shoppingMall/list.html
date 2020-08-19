@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>shop</title>
+  <style>
+    body {
+      background-color: #F2EEE9;
+      font: normal 13px/1.5 Georgia, Serif;
+      color: #333;
+    }
+
+    .item {
+      background-color: #fff;
+      float: left;
+      margin: 0 10px 10px 0;
+      width: 100px;
+      padding: 10px;
+      height: 150px;
+    }
+
+    /* float: left가 옆으로 붙으라는 의미 */
+  </style>
+  <!-- 테이블서  no 추가 -->
+  <div id="item">
+
+  </div>
+</head>
+
+<body>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript">
+    $.ajax({
+      url: `/list`,
+      type: 'post',
+      success: function(res) {
+        // console.log(res);
+        for (var i = 0; i < res.length; i++) {
+          console.log("onsale",res[i].onsale);
+          if(res[i].onsale==1) {
+
+            // console.log(res[i].name);
+            // console.log(`${res[i].no}`);
+
+            // 본래 문장
+
+            // var appendText =
+            //   `<div class="item">
+            //   <h2>${res[i].name}</h2>
+            //   <p>가격:${res[i].price}</p>
+            //   <p>재고:${res[i].inventory}</p>` +
+            //   (res[i].inventory > 0 ? `<button onclick="window.open('/order?no=${res[i].no}','주문페이지'
+            //   ,'width=430,height=500,location=no,status=no,scrollbars=yes');">구매하기</button>`
+            //   : '재고없음')
+            //   +
+            //   `</div>
+            //   `
+            // $("#item").append(appendText);
+            // ( 조건? 'true이면 실행' : 'false이면 실행')
+
+            var appendText2 =
+              `<div class="item">
+              <h2>${res[i].name}</h2>
+              <p>가격:${res[i].price}</p>
+              <p>재고:${res[i].inventory}</p>` +
+                        (res[i].inventory > 0 ? `<button onclick="openOrderPage(${res[i].no})">구매하기</button>` :
+                          '재고없음') +
+                        `</div>
+              `
+            $("#item").append(appendText2);
+
+
+          } //for end
+
+          }
+
+        // <button id=purchaseBtn${res[i].no}>구매하기</button>
+      }
+    }); //ajax end
+
+  function openOrderPage(no) {
+    window.open(`/order?no=${no}`,'주문페이지','width=430,height=500,location=no,status=no,scrollbars=yes');
+  }
+
+  </script>
+</body>
+
+</html>

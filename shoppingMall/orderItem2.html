@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>주문 페이지</title>
+  <link rel="stylesheet" href="getFile?filename=shop.css" />
+
+</head>
+
+<body>
+  <style>
+
+  </style>
+  <!-- 테이블서  no 추가 -->
+  <div id="item">
+
+  </div>
+
+  </br>
+  수량 : <input type="text" name="" value="" id="orderAmount">
+  </br>
+  ID : <input type="text" name="" value="" id="orderID">
+  <input type="button" name="" value="주문하기" id="orderBtn">
+
+</body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+  var no = location.href.split("=")[1]
+  var resInventory;
+  $.ajax({
+    url: `/oderItem2`,
+    type: 'post',
+    data: {
+      no: no
+    },
+    success: function(res) {
+      // console.log(res);
+      for (var i = 0; i < res.length; i++) {
+        // console.log(res[i].name);
+        // console.log(`${res[i].no}`);
+        resInventory = `${res[i].inventory}`
+        $("#item").append(
+          `<div class="item">
+        <h2>${res[i].name}</h2>
+        <p>가격:${res[i].price}</p>
+        <p>재고:${res[i].inventory}</p>
+        </div>
+        `)
+
+      } //for end
+      // <button id=purchaseBtn${res[i].no}>구매하기</button>
+    }
+  }); //ajax end
+
+
+  $("#orderBtn").click(function() {
+
+    var orderAmount = $("#orderAmount").val();
+    var orderID = $("#orderID").val();
+    console.log(resInventory);
+    // 각각 insert문, update문 실행
+    if (Number(resInventory) >= Number(orderAmount)) {
+      $.ajax({
+        url: `/insertOrder2`,
+        type: 'post',
+        data: {
+          orderID: orderID,
+          itemNo: no,
+          orderAmount: orderAmount,
+          resInventory:resInventory
+        },
+        success: function(res) {
+          alert("구매완료")
+          opener.window.location = '/';
+          window.close();
+        }
+      }); //ajax end : insert
+
+      //cut
+    } else {
+      alert("주문 할 수 없습니다.");
+      opener.window.location = '/';
+      window.close();
+    }
+
+  }); //orderBtn end
+</script>
+
+</html>
