@@ -47,6 +47,9 @@ var coinData = [];
   	res.send(coinData);
   })
 });
+
+
+// 저장 버튼
 app.post('/selectCoinName', function (req, res) {
   var param = JSON.parse(req.body.param);
 
@@ -69,4 +72,31 @@ app.post('/insertCoin', function (req, res) {
     res.send(rows);
   })//select end
 
+});
+
+
+// 그래프 버튼
+app.get('/graphCoin', function (req, res) {
+	res.sendfile("coinAvg.html");
+});
+
+app.post('/selectCoinNmData', function (req, res) {
+  var param = Number(req.body.idx);
+  var selectCoinPk = `select * from coin_data where 1=1 and coin_pk=${param}`;
+  connection.query(selectCoinPk,
+  function(err, rows, fields){
+    if (err) throw err;
+    res.send(rows);
+  })//select end
+});
+
+
+//  평균 그래프 버튼  selectCoinNmAvg
+app.post('/selectCoinNameDaily', function (req, res) {
+  var listQ = `SELECT * FROM coin_data ORDER BY saveDate ASC`;
+  connection.query(listQ,
+  function(err, rows, fields){
+    if (err) throw err;
+    res.send(rows);
+  })
 });

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>김선화_추세선</title>
+</head>
+
+<body>
+  <div id="chart_div"></div>
+</body>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="jsFile.js" charset="utf-8"></script>
+<script type="text/javascript">
+// 코인명에 해당 리스트 조회 결과를 그래프로
+// var coinName = escape(location.href).split("&")[0].split('=')[1]
+var coinName = decodeURI(location.href.split("&")[0].split('=')[1])
+var idx = location.href.split("&")[1].split('=')[1]
+var resData;
+
+
+$.ajax({
+  url : '/selectCoinNmData',
+  type : 'post',
+  data: {
+    idx: idx
+  },
+  success: function(res) {
+    console.log(res)
+    resLength = res.length;
+    var arrForCahrt = [];
+    for (var i = 0; i < resLength; i++) {
+      var length = res[i].length;
+      var dateSpan = res[i].saveDate.split('T')[0].split('-')
+      var date = dateSpan[1]+'/'+dateSpan[2]
+
+      arrForCahrt.push([date, res[i].upbit,res[i].bitfinex])
+    }
+    google.charts.load('current', {packages: ['corechart', 'line']});
+    google.charts.setOnLoadCallback(drawBasic);
+    function drawBasic() {
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', '코인명');
+          data.addColumn('number', 'upbit');
+          data.addColumn('number', 'bitfinex');
+
+          data.addRows( arrForCahrt );
+
+          var options = {
+            hAxis: {
+              title: coinName
+            },
+            vAxis: {
+              title: ' upbit & bitfinex'
+            }
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+          chart.draw(data, options);
+        }
+
+  }  // end of success in response
+});
+
+
+</script>
+
+</html>

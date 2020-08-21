@@ -20,8 +20,13 @@
   <span id="spreadInfo"></span><br>
   <span id="showGraph"></span>
   <div id="chart_div"></div>
-  <input type="button" name="" value="그래프" id="graphBtn">
+
+  <div id="dailyChart_div"></div>
+   <div id="chart_lines" ></div>
+
+  <input type="button" name="" value="오늘의 그래프" id="graphBtn">
   <input type="button" name="" value="엑셀 다운받기" id="reqHtml"></br>
+  <input type="button" name="" value="주간 그래프" id="graphAvgBtn">
 
 </body>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -29,6 +34,7 @@
 <script type="text/javascript">
 // var pk_name = Array(6).fill(null).map(() => Array());
 var pk_name = []
+var pk_name_length = 0
 var reqParamList = [];
   $.ajax({
     url: `/reqInfo`,
@@ -61,7 +67,9 @@ var reqParamList = [];
               }  // end of else
           }
         } // end of for with j
-        $('#todayCoin').append(`<input type="button"  onclick="saveCoinData('${reqParam.coinName}')" value="저장"></br>`)
+        $('#todayCoin').append(`<input type="button" onclick="saveCoinData('${reqParam.coinName}')" value="저장">`)
+        $('#todayCoin').append(`&nbsp;<input type="button" onclick="graphCoin('${reqParam.coinName}')" value="그래프"></br>`)
+
         reqParamList.push(reqParam);
     } //  end of for
 
@@ -71,7 +79,8 @@ var reqParamList = [];
         data:{
           param : JSON.stringify(reqParamList)
         },success:function(res){
-          for (var i=0 ; i < res.length ; i++){
+          pk_name_length = res.length;
+          for (var i=0 ; i < pk_name_length ; i++){
             pk_name.push([res[i].idx_pk,res[i].coinName])
           }
         }
@@ -79,11 +88,9 @@ var reqParamList = [];
 
   }});
 
-
-
 function saveCoinData(coinNm){
   var reqParam = {}
-  for (var i=0 ; i<5; i++){
+  for (var i=0 ; i<pk_name_length; i++){
     if ( pk_name[i][1] == coinNm){
       reqParam.coin_pk = pk_name[i][0]
       reqParam.upbit = reqParamList[i].upbit
@@ -100,49 +107,155 @@ function saveCoinData(coinNm){
       param : JSON.stringify(reqParam)
     },success:function(res){
       alert('저장 완료 됐습니다.')
-      alert(res)
     }
   });      //  end of select coin_pk table
 }
 
+// 추세선 버튼
+function graphCoin(coinNm){
+  var coin_pk = 0;
+  for(var i=0;i<5;i++){
+    if(pk_name[i][1] == coinNm){
+      coin_pk = pk_name[i][0]
+    }
+  }
+  window.open(`/graphCoin?coinName=${coinNm}&Number=${coin_pk}`,'김선화_코인그래프','width=900,height=300,location=no,status=no,scrollbars=yes');
+}
 
-
-        var dailyAverage = [];
-  $("#graphBtn").click(function() {
+//  오늘의 그래프
+var dailyAverage = [];
+$("#graphBtn").click(function() {
 //  평균 로직은 데이터 모인 후에  -dailyAverage 채우기
-            console.log(reqParamList)
-            var arrForCahrt = [];
-            var avg = 0;
-            for (var i =0; i < reqParamList.length ; i++ ){
-              arrForCahrt.push([reqParamList[i].coinName, reqParamList[i].upbit,reqParamList[i].upbitFluctuation])
+    var arrForCahrt = [];
+    for (var i =0; i < reqParamList.length ; i++ ){
+      arrForCahrt.push([reqParamList[i].coinName, reqParamList[i].upbit,reqParamList[i].upbitFluctuation])
+    }
+
+    google.charts.load('current', {packages: ['corechart', 'line']});
+    google.charts.setOnLoadCallback(drawBasic);
+    function drawBasic() {
+
+          var data = new google.visualization.DataTable();
+          data.addColumn('string', '코인명');    //  ?
+          data.addColumn('number', 'upbit');
+          data.addColumn('number', '변동률');
+
+          data.addRows( arrForCahrt );
+
+          var options = {
+            hAxis: {
+              title: '코인명'
+            },
+            vAxis: {
+              title: 'upbit'
+            }
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+        }
+  });
+
+// 평균 그래프  avgChart_div
+$("#graphAvgBtn").click(function() {
+  var coin_upbit_list = []
+  var coin_bitfinex_list = []
+  let date_list = []
+
+  $.ajax({
+    url:'/selectCoinNameDaily',
+    type:'post',
+    success:function(res){
+      var len = res.length;
+      var coin_name_list = []
+      var idx = 1;
+
+      for(var i=0 ; i<len ; i++){
+          if (i%5==0 && i>0){
+            coin_upbit_list.push(coin_name_list)
+            coin_name_list = []
+          }
+          coin_name_list.push(res[i].upbit)
+          var dateSpan = res[i].saveDate.split('T')[0].split('-')
+          var date = ''
+          date = `${dateSpan[1]}/${dateSpan[2]}`
+          if (! date_list.includes(date)){
+            date_list.push(date)
+          }
+      }   // end of for
+      coin_upbit_list.push(coin_name_list)
+
+      var arrForCahrt = [];
+      for (var i=0; i< date_list.length; i++) {
+        arrForCahrt.push([date_list[i]])
+        var j_length = coin_upbit_list[i].length
+        for(var j=0 ; j<j_length ; j++) {
+          arrForCahrt[i].push(coin_upbit_list[i][j])
+        }
+
+      }
+      google.charts.load('current', {packages: ['corechart', 'line']});
+      google.charts.setOnLoadCallback(drawBasic);
+      function drawBasic() {
+
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('string', '날짜');
+          for(var i=0 ; i<5;i++){
+            data.addColumn('number', pk_name[i][1]);
+          }
+          data.addRows( arrForCahrt);
+
+          var options = {
+            hAxis: {
+              title: 'date'
+            },
+            vAxis: {
+              title: '코인명'
+            }
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('dailyChart_div'));
+          chart.draw(data, options);
+        }
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('string', 'x');
+          data.addColumn('number', 'values');
+            data.addColumn({id:'i0', type:'number', role:'interval'});
+            data.addColumn({id:'i1', type:'number', role:'interval'});
+            data.addColumn({id:'i2', type:'number', role:'interval'});
+            data.addColumn({id:'i2', type:'number', role:'interval'});
+
+
+          data.addRows(arrForCahrt);
+
+
+              // The intervals data as narrow lines (useful for showing raw source data)
+          var options_lines = {
+              title: 'Line intervals, default',
+              curveType: 'function',
+              lineWidth: 4,
+              intervals: { 'style':'line' },
+              legend: 'none'
+          };
+
+              var chart_lines = new google.visualization.LineChart(document.getElementById('chart_lines'));
+              chart_lines.draw(data, options_lines);
             }
 
-            google.charts.load('current', {packages: ['corechart', 'line']});
-            google.charts.setOnLoadCallback(drawBasic);
-            function drawBasic() {
 
-                  var data = new google.visualization.DataTable();
-                  data.addColumn('string', '코인명');    //  ?
-                  data.addColumn('number', 'upbit');
-                  data.addColumn('number', '변동률');
+    }   //  end of success
+  });    //  end of ajax
 
-                  data.addRows( arrForCahrt );
+});   // end of graphAvgBtn
 
-                  var options = {
-                    hAxis: {
-                      title: '코인명'
-                    },
-                    vAxis: {
-                      title: 'upbit'
-                    }
-                  };
 
-                  var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-
-                  chart.draw(data, options);
-                }
-
-      });
 
 </script>
 
