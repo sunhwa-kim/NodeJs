@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon -e js,html server.js",
-    "dev": "supervisor app.js"
+    "start": "npx nodemon -e js,html server.js"
   },
   "author": "",
   "license": "ISC",

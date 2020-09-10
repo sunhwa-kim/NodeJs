@@ -1,4 +1,4 @@
-const app = require('./app');  // app.js 불러오는
+const app = require('./app.js');  // app.js 불러오는
 const port = 3000;
 
 app.listen(port,() => {
