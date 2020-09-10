@@ -1,11 +1,8 @@
 const express = require('express');
-//const admin = require('./routes/admin');   //  admin 파일 추가
-const nunjucks = require('nunjucks');   // view engine (html)
-const logger = require('morgan');     //  미들웨어 - 로깅정보
-const bodyParser = require('body-parser');   //  express내 내장모듈이라 npm 받지 않고 바로 가져오기
+const nunjucks = require('nunjucks');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
 
-// const app = express();
-// const port = 3000;   // index.js에서 썼던것의 express 버전
 
 class App {
 
@@ -84,7 +81,6 @@ class App {
     errorHandler() {
 
         this.app.use( (err, req, res,  _ ) => {
-            console.log(err);  // 에러 정보 알려줌 
             res.status(500).render('common/500.html')
         });
     
@@ -93,11 +89,3 @@ class App {
 }
 
 module.exports = new App().app;
-
-// 4. Routing
-    //  미들웨어 = app.use( 'url'은 파일명 참고해라~)
-//app.use('/admin', admin);
-
-// app.listen(port, () =>  {
-//     console.log('Express listening on port', port);
-// });
