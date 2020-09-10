@@ -33,19 +33,19 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
 // var pk_name = Array(6).fill(null).map(() => Array());
-var pk_name = []
-var pk_name_length = 0
-var reqParamList = [];
+let pk_name = []
+let pk_name_length = 0
+let reqParamList = [];
   $.ajax({
     url: `/reqInfo`,
     type: 'get',
     success: function(res) {
-      var dateInfo = new Date();
+      let dateInfo = new Date();
       $('#dateInfo').append(' * '+dateInfo)
 
-      for(var i=0; i<res.length;i++){
-        var reqParam = {};
-        for (var j=0; j<res[i].length;j++){
+      for(let i=0; i<res.length;i++){
+        let reqParam = {};
+        for (let j=0; j<res[i].length;j++){
           if (res[i][j] != ""){
             $('#todayCoin').append('<div class="todaycoin">'+res[i][j]+'</div>')
               if (j==0) {
@@ -80,7 +80,7 @@ var reqParamList = [];
           param : JSON.stringify(reqParamList)
         },success:function(res){
           pk_name_length = res.length;
-          for (var i=0 ; i < pk_name_length ; i++){
+          for (let i=0 ; i < pk_name_length ; i++){
             pk_name.push([res[i].idx_pk,res[i].coinName])
           }
         }
@@ -89,8 +89,8 @@ var reqParamList = [];
   }});
 
 function saveCoinData(coinNm){
-  var reqParam = {}
-  for (var i=0 ; i<pk_name_length; i++){
+  let reqParam = {}
+  for (let i=0 ; i<pk_name_length; i++){
     if ( pk_name[i][1] == coinNm){
       reqParam.coin_pk = pk_name[i][0]
       reqParam.upbit = reqParamList[i].upbit
@@ -113,8 +113,8 @@ function saveCoinData(coinNm){
 
 // 추세선 버튼
 function graphCoin(coinNm){
-  var coin_pk = 0;
-  for(var i=0;i<5;i++){
+  let coin_pk = 0;
+  for(let i=0;i<5;i++){
     if(pk_name[i][1] == coinNm){
       coin_pk = pk_name[i][0]
     }
@@ -123,11 +123,11 @@ function graphCoin(coinNm){
 }
 
 //  오늘의 그래프
-var dailyAverage = [];
+let dailyAverage = [];
 $("#graphBtn").click(function() {
 //  평균 로직은 데이터 모인 후에  -dailyAverage 채우기
-    var arrForCahrt = [];
-    for (var i =0; i < reqParamList.length ; i++ ){
+    let arrForCahrt = [];
+    for (let i =0; i < reqParamList.length ; i++ ){
       arrForCahrt.push([reqParamList[i].coinName, reqParamList[i].upbit,reqParamList[i].upbitFluctuation])
     }
 
@@ -135,14 +135,14 @@ $("#graphBtn").click(function() {
     google.charts.setOnLoadCallback(drawBasic);
     function drawBasic() {
 
-          var data = new google.visualization.DataTable();
+          let data = new google.visualization.DataTable();
           data.addColumn('string', '코인명');    //  ?
           data.addColumn('number', 'upbit');
           data.addColumn('number', '변동률');
 
           data.addRows( arrForCahrt );
 
-          var options = {
+          let options = {
             hAxis: {
               title: '코인명'
             },
@@ -151,33 +151,33 @@ $("#graphBtn").click(function() {
             }
           };
 
-          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+          let chart = new google.visualization.LineChart(document.getElementById('chart_div'));
           chart.draw(data, options);
         }
   });
 
 // 평균 그래프  avgChart_div
 $("#graphAvgBtn").click(function() {
-  var coin_upbit_list = []
-  var coin_bitfinex_list = []
+  let coin_upbit_list = []
+  let coin_bitfinex_list = []
   let date_list = []
 
   $.ajax({
     url:'/selectCoinNameDaily',
     type:'post',
     success:function(res){
-      var len = res.length;
-      var coin_name_list = []
-      var idx = 1;
+      let len = res.length;
+      let coin_name_list = []
+      let idx = 1;
 
-      for(var i=0 ; i<len ; i++){
+      for(let i=0 ; i<len ; i++){
           if (i%5==0 && i>0){
             coin_upbit_list.push(coin_name_list)
             coin_name_list = []
           }
           coin_name_list.push(res[i].upbit)
-          var dateSpan = res[i].saveDate.split('T')[0].split('-')
-          var date = ''
+          let dateSpan = res[i].saveDate.split('T')[0].split('-')
+          let date = ''
           date = `${dateSpan[1]}/${dateSpan[2]}`
           if (! date_list.includes(date)){
             date_list.push(date)
@@ -185,11 +185,11 @@ $("#graphAvgBtn").click(function() {
       }   // end of for
       coin_upbit_list.push(coin_name_list)
 
-      var arrForCahrt = [];
-      for (var i=0; i< date_list.length; i++) {
+      let arrForCahrt = [];
+      for (let i=0; i< date_list.length; i++) {
         arrForCahrt.push([date_list[i]])
-        var j_length = coin_upbit_list[i].length
-        for(var j=0 ; j<j_length ; j++) {
+        let j_length = coin_upbit_list[i].length
+        for(let j=0 ; j<j_length ; j++) {
           arrForCahrt[i].push(coin_upbit_list[i][j])
         }
 
@@ -198,15 +198,15 @@ $("#graphAvgBtn").click(function() {
       google.charts.setOnLoadCallback(drawBasic);
       function drawBasic() {
 
-          var data = new google.visualization.DataTable();
+          let data = new google.visualization.DataTable();
 
           data.addColumn('string', '날짜');
-          for(var i=0 ; i<5;i++){
+          for(let i=0 ; i<5;i++){
             data.addColumn('number', pk_name[i][1]);
           }
           data.addRows( arrForCahrt);
 
-          var options = {
+          let options = {
             hAxis: {
               title: 'date'
             },
@@ -215,7 +215,7 @@ $("#graphAvgBtn").click(function() {
             }
           };
 
-          var chart = new google.visualization.LineChart(document.getElementById('dailyChart_div'));
+          let chart = new google.visualization.LineChart(document.getElementById('dailyChart_div'));
           chart.draw(data, options);
         }
       google.charts.load('current', {'packages':['corechart']});
@@ -223,7 +223,7 @@ $("#graphAvgBtn").click(function() {
 
       function drawChart() {
 
-          var data = new google.visualization.DataTable();
+          let data = new google.visualization.DataTable();
 
           data.addColumn('string', 'x');
           data.addColumn('number', 'values');
@@ -237,7 +237,7 @@ $("#graphAvgBtn").click(function() {
 
 
               // The intervals data as narrow lines (useful for showing raw source data)
-          var options_lines = {
+          let options_lines = {
               title: 'Line intervals, default',
               curveType: 'function',
               lineWidth: 4,
@@ -245,7 +245,7 @@ $("#graphAvgBtn").click(function() {
               legend: 'none'
           };
 
-              var chart_lines = new google.visualization.LineChart(document.getElementById('chart_lines'));
+              let chart_lines = new google.visualization.LineChart(document.getElementById('chart_lines'));
               chart_lines.draw(data, options_lines);
             }
 

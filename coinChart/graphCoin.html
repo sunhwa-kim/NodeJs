@@ -15,9 +15,9 @@
 <script type="text/javascript">
 // 코인명에 해당 리스트 조회 결과를 그래프로
 // var coinName = escape(location.href).split("&")[0].split('=')[1]
-var coinName = decodeURI(location.href.split("&")[0].split('=')[1])
-var idx = location.href.split("&")[1].split('=')[1]
-var resData;
+let coinName = decodeURI(location.href.split("&")[0].split('=')[1])
+let idx = location.href.split("&")[1].split('=')[1]
+let resData;
 
 
 $.ajax({
@@ -29,25 +29,25 @@ $.ajax({
   success: function(res) {
     console.log(res)
     resLength = res.length;
-    var arrForCahrt = [];
-    for (var i = 0; i < resLength; i++) {
-      var length = res[i].length;
-      var dateSpan = res[i].saveDate.split('T')[0].split('-')
-      var date = dateSpan[1]+'/'+dateSpan[2]
+    let arrForCahrt = [];
+    for (let i = 0; i < resLength; i++) {
+      let length = res[i].length;
+      let dateSpan = res[i].saveDate.split('T')[0].split('-')
+      let date = dateSpan[1]+'/'+dateSpan[2]
 
       arrForCahrt.push([date, res[i].upbit,res[i].bitfinex])
     }
     google.charts.load('current', {packages: ['corechart', 'line']});
     google.charts.setOnLoadCallback(drawBasic);
     function drawBasic() {
-          var data = new google.visualization.DataTable();
+          let data = new google.visualization.DataTable();
           data.addColumn('string', '코인명');
           data.addColumn('number', 'upbit');
           data.addColumn('number', 'bitfinex');
 
           data.addRows( arrForCahrt );
 
-          var options = {
+          let options = {
             hAxis: {
               title: coinName
             },
@@ -56,7 +56,7 @@ $.ajax({
             }
           };
 
-          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+          let chart = new google.visualization.LineChart(document.getElementById('chart_div'));
 
           chart.draw(data, options);
         }

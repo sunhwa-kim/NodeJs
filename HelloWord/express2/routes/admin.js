@@ -8,8 +8,9 @@ router.get('/',(req,res) => {
 
 router.get('/products',(req,res) => {
     // res.send('admin/products');
-    res.sendFile('/products.html');
     // res.render('admin/products.html');
+
+    res.render('admin/products.html',{message:'분리 url에서 새 폴더 파일에 메세지 전달'});
 });
 
 module.exports = router;

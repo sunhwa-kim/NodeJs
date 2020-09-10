@@ -1,12 +1,12 @@
-var express = require('express');
-var http = require('http');
-var app = express();
-var server = http.createServer(app).listen(80);
-var mysql = require('mysql');
-var bodyParser = require("body-parser");
+const express = require('express');
+const http = require('http');
+const app = express();
+const server = http.createServer(app).listen(80);
+const mysql = require('mysql');
+const bodyParser = require("body-parser");
 
-var request = require('request');
-var cheerio = require('cheerio');//웹크롤링
+const request = require('request');
+const cheerio = require('cheerio');//웹크롤링
 
 //post
 app.use(bodyParser.urlencoded({
@@ -16,7 +16,7 @@ app.use(bodyParser.json());//post
 
 // const cheerio = require('cheerio');
 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
 	host: 'localhost'
 	, port: 3306
 	, user: 'root'
@@ -31,13 +31,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/reqInfo', function (req, res) {
-var coinData = [];
+let coinData = [];
 
   request.get({uri:'https://coin.zum.com/price?cm=more'}
   ,function(err,response,body){
     const $ = cheerio.load(body);
-    for (var i=0; i<5; i++) {
-      var subArr = []
+    for (let i=0; i<5; i++) {
+      let subArr = []
       subArr.push($("td").parent('tr').eq(i).children('td').find('a')[0].children[0].data.replace(/\n/gi,"").replace(/ /gi,""))
       subArr.push($("td").parent('tr').eq(i).children('td').eq(1).text().replace(/\n/gi,"").replace(/ /gi,""))
       subArr.push($("td").parent('tr').eq(i).children('td').eq(2).text().replace(/\n/gi,"").replace(/ /gi,""))
@@ -51,9 +51,9 @@ var coinData = [];
 
 // 저장 버튼
 app.post('/selectCoinName', function (req, res) {
-  var param = JSON.parse(req.body.param);
+  let param = JSON.parse(req.body.param);
 
-  var selectCoinPk = `select * from coin_pk`;
+  let selectCoinPk = `select * from coin_pk`;
   connection.query(selectCoinPk,
   function(err, rows, fields){
     if (err) throw err;
@@ -62,9 +62,9 @@ app.post('/selectCoinName', function (req, res) {
 });
 
 app.post('/insertCoin', function (req, res) {
-  var param = JSON.parse(req.body.param);
+  let param = JSON.parse(req.body.param);
   // var insertCoinData = `insert into coin_data (coin_pk,upbit, upbitFluctuation, bitfinex, bitfinexFluctuation) values ("${Number(param.idx)}","${param.upbit}","${param.upbitFluctuation}","${param.bitfinex}","${param.bitfinexFluctuation}")`;
-  var insertCoinData = `insert into coin_data set ? `;
+  let insertCoinData = `insert into coin_data set ? `;
 
   connection.query(insertCoinData,param,
   function(err, rows, fields){
@@ -81,8 +81,8 @@ app.get('/graphCoin', function (req, res) {
 });
 
 app.post('/selectCoinNmData', function (req, res) {
-  var param = Number(req.body.idx);
-  var selectCoinPk = `select * from coin_data where 1=1 and coin_pk=${param}`;
+  let param = Number(req.body.idx);
+  let selectCoinPk = `select * from coin_data where 1=1 and coin_pk=${param}`;
   connection.query(selectCoinPk,
   function(err, rows, fields){
     if (err) throw err;
@@ -93,7 +93,7 @@ app.post('/selectCoinNmData', function (req, res) {
 
 //  평균 그래프 버튼  selectCoinNmAvg
 app.post('/selectCoinNameDaily', function (req, res) {
-  var listQ = `SELECT * FROM coin_data ORDER BY saveDate ASC`;
+  let listQ = `SELECT * FROM coin_data ORDER BY saveDate ASC`;
   connection.query(listQ,
   function(err, rows, fields){
     if (err) throw err;

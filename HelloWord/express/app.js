@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');   //  express내 내장모듈이라 n
 const app = express();
 const port = 3000;   // index.js에서 썼던것의 express 버전
 
+// 1. view engine 셋팅
 nunjucks.configure('template', {   // 폴더명
     autoescape: true,   //  보안상
     express: app   //  express() 객체로
@@ -14,7 +15,7 @@ nunjucks.configure('template', {   // 폴더명
 
 // 위 -> 아래 순차적 진행 ( 미들웨어, 다른 폴더 화면 등)
 
-// 1. 미들웨어 셋팅 : app.use()
+// 2. 미들웨어 셋팅 : app.use()
 app.use(logger('dev'));   // 터미널에 로깅 확인
 app.use( bodyParser.json());    // body-parser 설정
 app.use( bodyParser.urlencoded( { extended : false }));
@@ -29,7 +30,7 @@ app.use( (req,res,next) => {
 
 
 
-//  2. 정적파일
+//  3. 정적 디렉토리
 app.use( '/uploads',express.static('uploads'));
 
     // Global View Variable : 템플릿 변수 - 미들웨어 처리 후 라우팅 들어가게
@@ -55,14 +56,14 @@ app.use('/admin',vipMiddleware, admin);
 
 
 
-// 3. Routing
+// 4. Routing
     //  미들웨어 = app.use( 'url'은 파일명 참고해라~)
 app.use('/admin', admin);
 
 
 
-// 4. 모든 라우팅 이후에
-    // 404
+// 4. 모든 라우팅 이후, error 처리
+    // 404 페이지를 찾을 수 없음
 app.use((req,res,_) => {  // next 부분 사용 안 하는 거 _ 처리 (req 등도 사용 안하면 _ ok)
     res.status(400).render('common/404.html');
 })
