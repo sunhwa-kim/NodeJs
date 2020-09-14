@@ -3,6 +3,7 @@ const nunjucks = require('nunjucks');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const models = require('./models');  // models 생략시 index.js 를 가장 먼저 가져옴
+const db = require('./models');
 
 class App {
 
@@ -45,6 +46,7 @@ class App {
         })
         .then(() => {
             console.log('DB Sync complete.');
+            return db.sequelize.sync();
         })
         .catch(err => {
             console.error('Unable to connect to the database:', err);
