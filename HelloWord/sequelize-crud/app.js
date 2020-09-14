@@ -2,12 +2,15 @@ const express = require('express');
 const nunjucks = require('nunjucks');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-
+const models = require('./models');  // models 생략시 index.js 를 가장 먼저 가져옴
 
 class App {
 
     constructor () {
         this.app = express();
+
+        // db 접속
+        this.dbConnection();
         
         // 뷰엔진 셋팅
         this.setViewEngine();
@@ -33,6 +36,20 @@ class App {
 
     }
 
+
+    dbConnection(){
+        // DB authentication
+        models.sequelize.authenticate()
+        .then(() => {
+            console.log('Connection has been established successfully.');
+        })
+        .then(() => {
+            console.log('DB Sync complete.');
+        })
+        .catch(err => {
+            console.error('Unable to connect to the database:', err);
+        });
+    }
 
     setMiddleWare (){
         
