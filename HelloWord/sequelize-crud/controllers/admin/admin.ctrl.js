@@ -1,9 +1,19 @@
 const models = require('../../models');
 
 exports.get_products = ( _ , res) => {
-    res.render( 'admin/products.html' , 
-        { message : "hello" } // message 란 변수를 템플릿으로 내보낸다.
-    );
+    // res.render( 'admin/products.html' , 
+    //     { message : "hello" } // message 란 변수를 템플릿으로 내보낸다.
+    // );
+
+    models.Products.findAll({
+        // 조회 조건
+    }).then( (products) => {  // 결과 : products
+        // res.render('admin/products.html', { productList : products })
+        res.render('admin/products.html', { products })  //JS key=value일때, 하나만 적어줘도 OK
+        // 단, 받는 products.html에 키값 맞춰주기 
+
+    } )
+
 }
 
 exports.get_products_write = ( _ , res) => {
