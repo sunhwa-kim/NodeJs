@@ -46,7 +46,7 @@ class App {
         })
         .then(() => {
             console.log('DB Sync complete.');
-            return db.sequelize.sync();
+            // return db.sequelize.sync();   // stop repeated create
         })
         .catch(err => {
             console.error('Unable to connect to the database:', err);
