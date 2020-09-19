@@ -33,24 +33,35 @@ exports.post_products_write = ( req , res ) => {
     });
 };
 
-exports.get_products_detail = ( req , res ) => {
-    console.log(req)
+exports.get_products_detail = ( req,res) =>{
+    // req.params.id
+    // models.모델명.findByPk().them(그 결과)
+    //  모델명 = models > Products.js 모델명
+    // models.Products.findByPk(req.params.id).then((product) => { 
+    //     res.render( 'admin/detail.html', { product});  // product : product
+    // });
     models.Products.findByPk(req.params.id).then( (product) => {
-        res.render('admin/detail.html', { product: product });  
+        res.render('admin/detail.html', { product });  
     });
-};
+}
 
 
-// exports.get_products_detail = ( req,res) =>{
-//     // req.params.id
-//     // models.모델명.findByPk().them(그 결과)
-//     //  모델명 = models > Products.js 모델명
-//     // models.Products.findByPk(req.params.id).then((product) => { 
-//     //     res.render( 'admin/detail.html', { product});  // product : product
-//     // });
-//     console.log('admin.ctrl__shshshsh',req.params.id);
-//     models.Products.findByPk(req.params.id).then( (product) => {
-//         res.render('admin/detail.html', { product: product });  
-//     });
-// }
+exports.get_products_edit = (req,res) => {
+    // write.html 가져와
+    models.Products.findByPk(req.params.id).then((product)=> {
+        res.render('admin/write.html',{product});
+    });
+}
+
+exports.post_products_edit = (req,res) => {
+    let id = req.params.id
+    // form -> update (data , id )
+    //  MySql  :  UPDATE 테이블명 SET 필드명 = "바꿀 값" WHERE 필드명= "조건 값"
+    models.Products.update(req.body,
+        {
+            where : { id }
+        }).then(()=>{
+            res.redirect('/admin/products/detail/' + id );  // 수정 전 이용 페이지
+    })
+}
 
