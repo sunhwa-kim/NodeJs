@@ -2,7 +2,7 @@ const express = require('express');
 const nunjucks = require('nunjucks');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const models = require('./models');  // models 생략시 index.js 를 가장 먼저 가져옴
+// const models = require('./models');  // models 생략시 index.js 를 가장 먼저 가져옴
 const db = require('./models');
 
 class App {
@@ -40,7 +40,7 @@ class App {
 
     dbConnection(){
         // DB authentication
-        models.sequelize.authenticate()
+        db.sequelize.authenticate()
         .then(() => {
             console.log('Connection has been established successfully.');
         })

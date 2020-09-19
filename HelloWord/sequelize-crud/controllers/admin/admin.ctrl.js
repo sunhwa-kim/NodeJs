@@ -11,9 +11,7 @@ exports.get_products = ( _ , res) => {
         // res.render('admin/products.html', { productList : products })
         res.render('admin/products.html', { products })  //JS key=value일때, 하나만 적어줘도 OK
         // 단, 받는 products.html에 키값 맞춰주기 
-
     } )
-
 }
 
 exports.get_products_write = ( _ , res) => {
@@ -33,5 +31,26 @@ exports.post_products_write = ( req , res ) => {
     models.Products.create(req.body).then( ()=>{
         res.redirect('/admin/products'); 
     });
+};
 
-}
+exports.get_products_detail = ( req , res ) => {
+    console.log(req)
+    models.Products.findByPk(req.params.id).then( (product) => {
+        res.render('admin/detail.html', { product: product });  
+    });
+};
+
+
+// exports.get_products_detail = ( req,res) =>{
+//     // req.params.id
+//     // models.모델명.findByPk().them(그 결과)
+//     //  모델명 = models > Products.js 모델명
+//     // models.Products.findByPk(req.params.id).then((product) => { 
+//     //     res.render( 'admin/detail.html', { product});  // product : product
+//     // });
+//     console.log('admin.ctrl__shshshsh',req.params.id);
+//     models.Products.findByPk(req.params.id).then( (product) => {
+//         res.render('admin/detail.html', { product: product });  
+//     });
+// }
+
