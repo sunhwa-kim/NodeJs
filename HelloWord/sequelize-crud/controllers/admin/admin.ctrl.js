@@ -65,3 +65,14 @@ exports.post_products_edit = (req,res) => {
     })
 }
 
+
+exports.get_products_delete = ( req , res ) => {
+    let id = req.params.id;
+    models.Products.destroy({
+        where: {
+            id
+        }
+    }).then( () => {
+        res.redirect('/admin/products');
+    });
+};
