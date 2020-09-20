@@ -1,78 +1,67 @@
 const models = require('../../models');
 
-exports.get_products = ( _ , res) => {
-    // res.render( 'admin/products.html' , 
-    //     { message : "hello" } // message 란 변수를 템플릿으로 내보낸다.
-    // );
+// async await 적용 : 순서 보장, 컴퓨터 성능도 좋음, 작성도 좋음
+exports.get_products = async (_,res) => {
 
-    models.Products.findAll({
-        // 조회 조건
-    }).then( (products) => {  // 결과 : products
-        // res.render('admin/products.html', { productList : products })
-        res.render('admin/products.html', { products })  //JS key=value일때, 하나만 적어줘도 OK
-        // 단, 받는 products.html에 키값 맞춰주기 
-    } )
+    try {
+        const products = await models.Products.findAll();
+        res.render('admin/products.html', {products});
+    } catch(e) {
+
+    }
 }
 
 exports.get_products_write = ( _ , res) => {
-    res.render( 'admin/write.html');
+    try{
+        res.render( 'admin/write.html');
+    } catch(e){
+        console.log('error in get_products_write');
+    }
 }
 
-exports.post_products_write = ( req , res ) => {
-    // res.send(req.body);
-    // models.Products.create({
-    //     name : req.body.name,
-    //     price : req.body.price,
-    //     description : req.body.description,
-    // }).then( ()=>{
-    //     res.redirect('/admin/products');  // 리스트 페이지로
-    // });
-
-    models.Products.create(req.body).then( ()=>{
-        res.redirect('/admin/products'); 
-    });
-};
-
-exports.get_products_detail = ( req,res) =>{
-    // req.params.id
-    // models.모델명.findByPk().them(그 결과)
-    //  모델명 = models > Products.js 모델명
-    // models.Products.findByPk(req.params.id).then((product) => { 
-    //     res.render( 'admin/detail.html', { product});  // product : product
-    // });
-    models.Products.findByPk(req.params.id).then( (product) => {
-        res.render('admin/detail.html', { product });  
-    });
+exports.post_products_write = async (req, res) => {
+    try{
+        await models.Products.create(req.body);
+        res.redirect('/admin/products');   // redirect 시 url 부분 맨 앞 / 시작 (/없으면 덧붙여짐)
+    } catch(e){
+        console.log('error in post_products_write');
+    }
 }
 
+exports.get_products_detail = async (req, res) => {
+    try {
+        const product = await models.Products.findByPk(req.params.id);
+        res.render('admin/detail.html',{product});
+    }catch(e){
+        console.log('error, get_products_detail');
+    }
+}
 
-exports.get_products_edit = (req,res) => {
-    // write.html 가져와
-    models.Products.findByPk(req.params.id).then((product)=> {
+exports.get_products_edit = async(req,res) => {
+    try {
+        const product = await models.Products.findByPk(req.params.id);
         res.render('admin/write.html',{product});
-    });
+    } catch (e){
+        console.log('error, get_products_edit');
+    } 
 }
 
-exports.post_products_edit = (req,res) => {
-    let id = req.params.id
-    // form -> update (data , id )
-    //  MySql  :  UPDATE 테이블명 SET 필드명 = "바꿀 값" WHERE 필드명= "조건 값"
-    models.Products.update(req.body,
-        {
-            where : { id }
-        }).then(()=>{
-            res.redirect('/admin/products/detail/' + id );  // 수정 전 이용 페이지
-    })
+exports.post_products_edit = async(req,res) => {
+    try {
+        let id = req.params.id;
+        await models.Products.update(req.body,{ where:{id} } );
+        res.redirect('/admin/products/detail/'+id);
+    } catch (e){
+        console.log('error, post_products_edit');
+    }
 }
 
-
-exports.get_products_delete = ( req , res ) => {
-    let id = req.params.id;
-    models.Products.destroy({
-        where: {
-            id
-        }
-    }).then( () => {
+exports.get_products_delete = async (req, res) => {
+    try {
+        let id = req.params.id;
+        await models.Products.destroy({ where : {id} })
         res.redirect('/admin/products');
-    });
-};
+    } catch(e){
+        console.log('error, get_products_delete');
+    }
+}
