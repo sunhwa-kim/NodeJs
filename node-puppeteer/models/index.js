@@ -15,7 +15,8 @@ process.env.DB_USER, process.env.DB_PASSWORD,{
         max: 5,
         min: 0,
         idle: 10000
-    }
+    },
+    logging : false  //  false : 시작시 설정된 create 등 log 정보 안 보이게
 });
 
 let db = [];
