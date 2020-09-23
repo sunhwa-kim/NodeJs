@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    graphQL example
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
+<script>
+    조회
+    axios.get('http://localhost:4000/graphql',{
+        params : {
+            query : "{ getProduct( id:1){ name description } }"
+        }
+    }).then( function(result){
+        console.log(result);
+    })
+
+    입력
+    axios.post('http://localhost:4000/graphql',{
+        "query": "mutation addProduct($input: ProductInput) { addProduct(input: $input) { id } }",
+        "variables": { "input" : { "name" : "세번째상품 FE 입력 테스트" , "price" : 3000 , "description" : "sunhwa" } }
+    }).then((result) => {
+        console.log(result);
+    })
+
+
+</script>
+</body>
+</html>
