@@ -6,8 +6,8 @@ MongoDB
 TDD - mocha
 
 * install
-npm i mongodb --save
-npm i mocha --save-dev
-npm i express-async-errors --save
-npm i body-parser --save
+    - npm i mongodb --save
+    - npm i mocha --save-dev
+    - npm i express-async-errors --save
+    - npm i body-parser --save
 
